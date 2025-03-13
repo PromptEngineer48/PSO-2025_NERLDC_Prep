@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEGC Chapter 8-9-10 Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .option {
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .option label {
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 8px;
+            width: 90%;
+            vertical-align: top;
+        }
+        
+        input[type="radio"] {
+            cursor: pointer;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        
+        .answer-explanation {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .explanation {
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .user-answer-correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .user-answer-incorrect {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #3498db;
+            width: 0;
+            transition: width 0.3s;
+        }
+        
+        #timer {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .quiz-container {
+                padding: 15px;
+            }
+            
+            .option label {
+                width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>IEGC Chapter 8-9-10 Quiz</h1>
+    
+    <div id="intro" class="quiz-container">
+        <h2>Welcome to the Chapter 8-9-10 IEGC 2023 Quiz</h2>
+        <p>Select one answer for each question. After completing all questions, you will see your score and the correct answers with explanations.</p>
+        <div class="button-container">
+            <button id="start-btn">Start Quiz</button>
+        </div>
+    </div>
+    
+    <div id="quiz-section" class="hidden">
+        <div id="timer">Time: 00:00</div>
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div class="quiz-container" id="question-container">
+            <!-- Questions will be added here dynamically -->
+        </div>
+        
+        <div class="button-container">
+            <button id="submit-btn">Submit Quiz</button>
+        </div>
+    </div>
+    
+    <div id="results" class="results">
+        <div class="quiz-container">
+            <h2>Quiz Results</h2>
+            <div id="score-display" class="score-display"></div>
+            <div id="time-taken"></div>
+            <div id="answers-container">
+                <!-- Answer explanations will be added here dynamically -->
+            </div>
+            <div class="button-container">
+                <button id="retake-btn">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const quizData = [
+        {
+            "question": "What is the primary objective of Chapter 8 of the IEGC 2023 regulations?",
+            "options": [
+                "To regulate energy pricing in the power sector",
+                "To outline cybersecurity measures for safeguarding the national grid",
+                "To define the responsibilities of power exchanges in energy trading",
+                "To establish guidelines for renewable energy integration"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 50(1), Chapter 8 deals with measures to safeguard the national grid from cyber threats such as spyware, malware, cyber-attacks, and hacking."
+        },
+        {
+            "question": "Which entities are required to have a cybersecurity framework under IEGC 2023?",
+            "options": [
+                "Only NLDC and RLDCs",
+                "Only power exchanges and QCAs",
+                "All users, NLDC, RLDCs, SLDCs, CTU, STUs, power exchanges, QCAs, and SNAs",
+                "Only generating stations and transmission licensees"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 50(2), all users, NLDC, RLDCs, SLDCs, CTU, STUs, power exchanges, QCAs, and SNAs must establish a cybersecurity framework in accordance with relevant cybersecurity regulations."
+        },
+        {
+            "question": "What is the requirement for cybersecurity audits under IEGC 2023?",
+            "options": [
+                "Only NLDC and RLDCs need to conduct audits",
+                "Audits should be conducted as per the CEA Cyber Security Guidelines 2021",
+                "Cybersecurity audits are voluntary for power exchanges",
+                "Cybersecurity audits are conducted once every five years"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 51, all entities must conduct cybersecurity audits as per the guidelines mentioned in the CEA (Cyber Security in Power Sector) Guidelines, 2021."
+        },
+        {
+            "question": "In the event of a cyber-attack, which entities must be informed?",
+            "options": [
+                "Only the Commission",
+                "Only NLDC, RLDCs, and SLDCs",
+                "Appropriate government agencies, NLDC, RLDCs, SLDCs, RPCs, and the Commission",
+                "Only CERT-In (Computer Emergency Response Team-India)"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 52(2), all entities must report cyber-attacks to appropriate government agencies and inform NLDC, RLDCs, SLDCs, RPCs, and the Commission."
+        },
+        {
+            "question": "What is the purpose of the Cyber Security Coordination Forum?",
+            "options": [
+                "To provide training for cybersecurity professionals",
+                "To coordinate and deliberate on cybersecurity challenges in the power sector",
+                "To oversee financial transactions related to cybersecurity compliance",
+                "To conduct regular market surveillance of power exchanges"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 53(1), the Cyber Security Coordination Forum is formed to coordinate and deliberate on cybersecurity challenges and gaps within the power sector."
+        },
+        {
+            "question": "What is the purpose of Chapter 9 in IEGC 2023?",
+            "options": [
+                "To outline cybersecurity measures",
+                "To monitor and ensure compliance with regulations",
+                "To regulate the operation of energy storage systems",
+                "To define the roles of power generators"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 54, Chapter 9 deals with monitoring compliance with regulations, reporting violations, and taking remedial actions."
+        },
+        {
+            "question": "What are the two methodologies for ensuring compliance as per Chapter 9?",
+            "options": [
+                "Self-Audit and Compliance Audit",
+                "Third-Party Audit and Performance Benchmarking",
+                "Penalties and Incentives",
+                "Market Surveillance and Operational Review"
+            ],
+            "correctAnswer": 0,
+            "explanation": "According to regulation 56(1), compliance is ensured through Self-Audit and Compliance Audit."
+        },
+        {
+            "question": "When must entities submit their annual self-audit reports?",
+            "options": [
+                "By 31st March every year",
+                "By 31st December every year",
+                "By 31st July every year",
+                "By 30th June every year"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 56(2)(a), all users and relevant entities must submit their annual self-audit reports by 31st July each year."
+        },
+        {
+            "question": "Who is responsible for monitoring compliance for RLDC, NLDC, CTU, and RPC?",
+            "options": [
+                "The Central Electricity Authority",
+                "The Commission",
+                "The Ministry of Power",
+                "The Regional Power Committee"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 56(2)(h), the Commission is responsible for monitoring compliance for RLDC, NLDC, CTU, and RPC."
+        },
+        {
+            "question": "What is the role of the Regional Power Committee (RPC) in compliance monitoring?",
+            "options": [
+                "To continuously monitor instances of non-compliance and find solutions",
+                "To impose penalties on non-compliant entities",
+                "To manage financial transactions related to compliance audits",
+                "To provide cybersecurity training for power sector personnel"
+            ],
+            "correctAnswer": 0,
+            "explanation": "According to regulation 56(2)(i), the RPC continuously monitors instances of non-compliance and works to resolve operational issues."
+        },
+        {
+            "question": "What power does the Commission have under regulation 57?",
+            "options": [
+                "To enforce cybersecurity measures",
+                "To relax provisions of the regulations if necessary",
+                "To impose penalties on power exchanges",
+                "To approve electricity tariffs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 57, the Commission has the power to relax provisions of the regulations in order to remove hardships."
+        },
+        {
+            "question": "What happens to previous versions of the Indian Electricity Grid Code (IEGC) under the new 2023 regulations?",
+            "options": [
+                "They remain in force alongside the new regulations",
+                "They are repealed from the date of commencement of the new regulations",
+                "They are applicable only to renewable energy projects",
+                "They continue to apply for a transition period of five years"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 59(1), the previous IEGC regulations, including the 2010 version and amendments, are repealed from the commencement of the new regulations."
+        },
+        {
+            "question": "What is the primary legal framework that governs the cybersecurity framework for power sector entities?",
+            "options": [
+                "Electricity Act, 2003",
+                "Information Technology Act, 2000",
+                "Central Electricity Regulatory Commission Act, 1998",
+                "National Cyber Security Policy, 2013"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 50(2), the cybersecurity framework for power sector entities must comply with the Information Technology Act, 2000, among other regulations."
+        },
+        {
+            "question": "Who is responsible for conducting cybersecurity audits for power sector entities?",
+            "options": [
+                "National Cyber Security Coordinator",
+                "Central Electricity Authority",
+                "Entities themselves as per the CEA Cyber Security Guidelines",
+                "Regional Load Dispatch Centers (RLDCs)"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 51, all entities must conduct cybersecurity audits as per the CEA Cyber Security Guidelines, 2021."
+        },
+        {
+            "question": "What is the role of the sectoral CERT in cybersecurity coordination?",
+            "options": [
+                "To approve cybersecurity policies for power sector entities",
+                "To act as a central agency for reporting cyber threats",
+                "To form a Cyber Security Coordination Forum and establish procedural rules",
+                "To provide financial assistance for cybersecurity compliance"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 53(1), the sectoral CERT forms a Cyber Security Coordination Forum to address cybersecurity challenges."
+        },
+        {
+            "question": "Which of the following reports must be submitted in case of a cyber-attack?",
+            "options": [
+                "A financial impact report",
+                "An incident report to the government and power sector authorities",
+                "A consumer complaint report",
+                "A business continuity plan"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 52(1) and 52(2), entities must report cyber-attacks to government agencies, NLDC, RLDCs, SLDCs, RPCs, and the Commission."
+        },
+        {
+            "question": "Which entities are required to submit their self-audit reports to the NLDC?",
+            "options": [
+                "Power exchanges",
+                "SLDCs",
+                "STUs",
+                "Transmission licensees"
+            ],
+            "correctAnswer": 0,
+            "explanation": "According to regulation 56(2)(d), power exchanges must submit their self-audit reports to the NLDC."
+        },
+        {
+            "question": "Who is responsible for monitoring compliance of STUs and SLDCs?",
+            "options": [
+                "NLDC",
+                "Central Electricity Authority",
+                "State Electricity Regulatory Commission (SERC)",
+                "Regional Load Dispatch Centers (RLDCs)"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 56(2)(h), SERCs are responsible for monitoring compliance of STUs and SLDCs."
+        },
+        {
+            "question": "What action can the Commission take upon receiving a report of non-compliance?",
+            "options": [
+                "Issue penalties without further proceedings",
+                "Order rectification and initiate proceedings if necessary",
+                "Suspend operations of the violating entity",
+                "Revoke the entity’s operating license"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 56(2)(j), the Commission may initiate appropriate proceedings upon receipt of reports on non-compliance."
+        },
+        {
+            "question": "What mechanism does the IEGC 2023 provide for resolving compliance-related disputes?",
+            "options": [
+                "Filing a petition with the Commission",
+                "Seeking arbitration under the Electricity Act",
+                "Requesting intervention from the Ministry of Power",
+                "Approaching the National Load Dispatch Center"
+            ],
+            "correctAnswer": 0,
+            "explanation": "According to regulation 56(2)(k), any person can file a petition with the Commission in case of non-compliance."
+        },
+        {
+            "question": "Under what circumstances can the Commission order an independent third-party compliance audit?",
+            "options": [
+                "If a complaint is received regarding an entity’s operations",
+                "If an entity fails to submit self-audit reports",
+                "If facts brought to its knowledge necessitate an audit",
+                "If any cybersecurity breach occurs"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 56(3), the Commission may order a third-party audit based on facts brought to its knowledge."
+        },
+        {
+            "question": "What is the primary objective of Chapter 10 in IEGC 2023?",
+            "options": [
+                "To define cybersecurity responsibilities",
+                "To outline miscellaneous provisions such as repeals, relaxations, and clarifications",
+                "To regulate the operation of renewable energy sources",
+                "To establish transmission pricing mechanisms"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 57-61, Chapter 10 deals with miscellaneous provisions, including the power to relax, remove difficulties, and repeal previous regulations."
+        },
+        {
+            "question": "What is the purpose of the power to relax under regulation 57?",
+            "options": [
+                "To exempt entities from compliance with cybersecurity norms",
+                "To allow modifications in regulations to address hardships",
+                "To provide financial assistance for regulatory compliance",
+                "To enable state governments to override central regulations"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 57, the Commission may relax provisions of the regulations to address hardships."
+        },
+        {
+            "question": "Which regulatory provisions remain in force despite the repeal of the 2010 IEGC regulations?",
+            "options": [
+                "None of the previous regulations are valid",
+                "Regulation 6.3B of the 2016 IEGC amendment",
+                "All past orders and regulations continue to apply",
+                "Only tariff-related provisions remain in force"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 59(2), Regulation 6.3B of the 2016 amendment remains in force until further orders."
+        },
+        {
+            "question": "Which regulation mandates that all users conduct a self-audit of their compliance?",
+            "options": [
+                "Regulation 50",
+                "Regulation 51",
+                "Regulation 56",
+                "Regulation 60"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 56(2)(a), all users, NLDC, RLDCs, STUs, power exchanges, QCAs, and SNAs must conduct an annual self-audit and submit reports by 31st July."
+        },
+        {
+            "question": "Who is responsible for tracking compliance progress of users?",
+            "options": [
+                "The Ministry of Power",
+                "The concerned RLDC or SLDC",
+                "The Cyber Security Coordination Forum",
+                "The National Power Committee"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 56(2)(g), RLDCs or SLDCs are the monitoring agencies responsible for tracking compliance progress of users and submitting exceptional reports for non-compliance."
+        },
+        {
+            "question": "What is the function of the Regional Power Committee (RPC) regarding compliance monitoring?",
+            "options": [
+                "To impose penalties on non-compliant entities",
+                "To review and resolve operational compliance issues",
+                "To regulate power pricing for different states",
+                "To handle cybersecurity threats"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 56(2)(i), RPC continuously monitors compliance violations, resolves operational issues, and suggests preventive measures."
+        },
+        {
+            "question": "Which regulation gives the Commission the authority to issue suo moto orders?",
+            "options": [
+                "Regulation 50",
+                "Regulation 56",
+                "Regulation 60",
+                "Regulation 58"
+            ],
+            "correctAnswer": 2,
+            "explanation": "According to regulation 60, the Commission can issue suo moto orders and practice directions regarding the implementation of these regulations."
+        },
+        {
+            "question": "What happens to existing procedures and instruments established under previous IEGC regulations?",
+            "options": [
+                "They are invalidated immediately upon the enactment of the new regulations",
+                "They continue to remain valid under the new provisions",
+                "They must be reapproved by the Commission",
+                "They are subject to a transition period of five years"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 59(4), any actions taken under previous regulations, including procedures, reports, and confirmations, will be deemed valid under the new regulations."
+        },
+        {
+            "question": "What is the role of the Commission in removing difficulties related to regulation implementation?",
+            "options": [
+                "It can modify the Electricity Act",
+                "It can make necessary provisions not inconsistent with the Act",
+                "It can delegate power to state governments",
+                "It can issue directives to the Ministry of Power"
+            ],
+            "correctAnswer": 1,
+            "explanation": "According to regulation 58, the Commission may make provisions, not inconsistent with the Act, to remove difficulties in implementing the regulations."
+        }
+    ];
+    
+        
+        // DOM elements
+        const introSection = document.getElementById('intro');
+        const quizSection = document.getElementById('quiz-section');
+        const questionContainer = document.getElementById('question-container');
+        const resultsSection = document.getElementById('results');
+        const scoreDisplay = document.getElementById('score-display');
+        const answersContainer = document.getElementById('answers-container');
+        const progressBar = document.getElementById('progress-bar');
+        const timerElement = document.getElementById('timer');
+        const timeTakenElement = document.getElementById('time-taken');
+        
+        // Buttons
+        const startBtn = document.getElementById('start-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const retakeBtn = document.getElementById('retake-btn');
+        
+        // Variables
+        let userAnswers = [];
+        let timer;
+        let seconds = 0;
+        
+        // Event listeners
+        startBtn.addEventListener('click', startQuiz);
+        submitBtn.addEventListener('click', submitQuiz);
+        retakeBtn.addEventListener('click', retakeQuiz);
+        
+        // Functions
+        function startQuiz() {
+            introSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+            renderQuestions();
+            startTimer();
+            updateProgressBar();
+        }
+        
+        function renderQuestions() {
+            questionContainer.innerHTML = '';
+            
+            quizData.forEach((questionData, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.innerHTML = `
+                    <div class="question-text">${index + 1}. ${questionData.question}</div>
+                    <div class="options">
+                        ${questionData.options.map((option, optionIndex) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}-option${optionIndex}" name="question${index}" value="${optionIndex}">
+                                <label for="q${index}-option${optionIndex}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                questionContainer.appendChild(questionDiv);
+            });
+            
+            // Add event listeners to radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', updateProgressBar);
+            });
+        }
+        
+        function startTimer() {
+            timer = setInterval(() => {
+                seconds++;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                timerElement.textContent = `Time: ${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        function updateProgressBar() {
+            const totalQuestions = quizData.length;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+            
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+        
+        function submitQuiz() {
+            clearInterval(timer);
+            
+            // Collect user answers
+            userAnswers = [];
+            for (let i = 0; i < quizData.length; i++) {
+                const selectedOption = document.querySelector(`input[name="question${i}"]:checked`);
+                userAnswers.push(selectedOption ? parseInt(selectedOption.value) : -1);
+            }
+            
+            // Check if all questions are answered
+            const unansweredQuestions = userAnswers.filter(answer => answer === -1).length;
+            if (unansweredQuestions > 0) {
+                if (confirm(`You have ${unansweredQuestions} unanswered question(s). Are you sure you want to submit?`)) {
+                    showResults();
+                }
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            // Calculate score
+            let score = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer === quizData[index].correctAnswer) {
+                    score++;
+                }
+            });
+            
+            // Display score
+            const percentage = Math.round((score / quizData.length) * 100);
+            scoreDisplay.innerHTML = `Your Score: ${score} out of ${quizData.length} (${percentage}%)`;
+            
+            // Display time taken
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            timeTakenElement.textContent = `Time taken: ${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            
+            // Display answers and explanations
+            answersContainer.innerHTML = '';
+            quizData.forEach((questionData, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === questionData.correctAnswer;
+                
+                const answerDiv = document.createElement('div');
+                answerDiv.classList.add('answer-explanation');
+                
+                answerDiv.innerHTML = `
+                    <div><strong>Question ${index + 1}:</strong> ${questionData.question}</div>
+                    <div class="correct-answer">Correct Answer: ${String.fromCharCode(65 + questionData.correctAnswer)}. ${questionData.options[questionData.correctAnswer]}</div>
+                    <div class="${isCorrect ? 'user-answer-correct' : 'user-answer-incorrect'}">
+                        Your Answer: ${userAnswer === -1 ? 'Not answered' : String.fromCharCode(65 + userAnswer) + '. ' + questionData.options[userAnswer]}
+                    </div>
+                    <div class="explanation"><strong>Explanation:</strong> ${questionData.explanation}</div>
+                `;
+                
+                answersContainer.appendChild(answerDiv);
+            });
+            
+            // Hide quiz section and show results
+            quizSection.classList.add('hidden');
+            resultsSection.style.display = 'block';
+        }
+        
+        function retakeQuiz() {
+            // Reset variables
+            userAnswers = [];
+            seconds = 0;
+            
+            // Hide results and show quiz
+            resultsSection.style.display = 'none';
+            quizSection.classList.remove('hidden');
+            
+            // Re-render questions
+            renderQuestions();
+            startTimer();
+            updateProgressBar();
+        }
+    </script>
+</body>
+</html>
